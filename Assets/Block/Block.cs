@@ -24,37 +24,18 @@ public struct B3
     }
 }
 
-public class Block : MonoBehaviour {
+public interface IBlock
+{
+    Vector3 Position { get; }
+    int Level { get; set; }
+    int MaterialID { get; set; }
+}
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-    public int materialID = -1;
-    public bool IsEntity { get { return materialID >= 0; } }
-    public int _level;
-    public int Level { get { return _level; } }
-    public Block[] subBlocks = new Block[8];
-
-    public float BlockSize { get { return (float)Math.Pow(2, Level); } }
-
-    public bool IsInBlock(Vector3 pos)
+public class BlockUtility
+{
+    public static float BlockSize(IBlock block)
     {
-        float radius = BlockSize * 0.5f;
-        Vector3 dir = pos - transform.position;
-        if (dir.x > radius || dir.x < -radius)
-            return false;
-        if (dir.y > radius || dir.y < -radius)
-            return false;
-        if (dir.z > radius || dir.z < -radius)
-            return false;
-
-        return true;
+        return (float)Math.Pow(2, block.Level);
     }
 
     public static Dictionary<B3, int> indexMap = new Dictionary<B3, int>
@@ -69,45 +50,140 @@ public class Block : MonoBehaviour {
             {new B3(true, true, true), 7 },
         };
 
+    public static Vector3[] ChildPositions(IBlock block)
+    {
+        float radius = BlockSize(block) * 0.25f;
+        return new Vector3[]
+        {
+                    block.Position+new Vector3(-radius, -radius,-radius),
+                    block.Position+new Vector3(-radius, -radius,radius),
+                    block.Position+new Vector3(-radius, radius,-radius),
+                    block.Position+new Vector3(-radius, radius,radius),
+                    block.Position+new Vector3(radius, -radius,-radius),
+                    block.Position+new Vector3(radius, -radius,radius),
+                    block.Position+new Vector3(radius, radius,-radius),
+                    block.Position+new Vector3(radius, radius,radius),
+        };
+    }
+
+    public static bool IsInBlock(IBlock block, Vector3 pos)
+    {
+        float radius = BlockSize(block) * 0.5f;
+        Vector3 dir = pos - block.Position;
+        if (dir.x > radius || dir.x < -radius)
+            return false;
+        if (dir.y > radius || dir.y < -radius)
+            return false;
+        if (dir.z > radius || dir.z < -radius)
+            return false;
+
+        return true;
+    }
+
+    public static int FindSubArea(IBlock block, Vector3 pos)
+    {
+        if (!BlockUtility.IsInBlock(block, pos))
+            return -1;
+        return BlockUtility.indexMap[new B3(pos.x > block.Position.x,
+            pos.y > block.Position.y, pos.z > block.Position.z)];
+    }
+}
+
+public class Block : MonoBehaviour, IBlock
+{
+    // Use this for initialization
+    void Start()
+    {
+
+    }
+
+    public void SetEntity()
+    {
+        Entity = null;
+        foreach (Transform t in transform)
+        {
+            Entity = t.gameObject;
+            break;
+        }
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    //void OnDestroy()
+    //{
+    //    for (int i = 0; i < 8; i++)
+    //    {
+    //        if (subBlocks[i] != null)
+    //            GameObject.Destroy(subBlocks[i]);
+    //    }
+    //}
+
+    public virtual Vector3 Position { get { return transform.position; } }
+
+    public GameObject Entity { get; private set; }
+    public bool IsEntity { get { return Entity.activeSelf; } }
+    public int Level { get; set; }
+    public Block[] subBlocks = new Block[8];
+
+    public float BlockSize { get { return BlockUtility.BlockSize(this); } }
+
+    public bool IsInBlock(Vector3 pos)
+    {
+        return BlockUtility.IsInBlock(this, pos);
+    }
+
     public int FindSubArea(Vector3 pos)
     {
-        if (!IsInBlock(pos))
-            return -1;
-        return indexMap[new B3(pos.x > transform.position.x,
-            pos.y > transform.position.y, pos.z > transform.position.z)];
+        return BlockUtility.FindSubArea(this, pos);
     }
 
     Vector3[] childPositions = null;
-    public Vector3[] ChildPosisitions
+    public Vector3[] ChildPositions
     {
         get
         {
             if (childPositions == null)
             {
-                float radius = BlockSize * 0.25f;
-                childPositions = new Vector3[]
-                {
-                    transform.position+new Vector3(-radius, -radius,-radius),
-                    transform.position+new Vector3(-radius, -radius,radius),
-                    transform.position+new Vector3(-radius, radius,-radius),
-                    transform.position+new Vector3(-radius, radius,radius),
-                    transform.position+new Vector3(radius, -radius,-radius),
-                    transform.position+new Vector3(radius, -radius,radius),
-                    transform.position+new Vector3(radius, radius,-radius),
-                    transform.position+new Vector3(radius, radius,radius),
-                };
+                childPositions = BlockUtility.ChildPositions(this);
             }
             return childPositions;
         }
     }
 
-    public void OnCreate()
-    {
+    public int MaterialID { get; set; }
 
+    public void SetPaletteMaterial(Palette palette, int id)
+    {
+        Entity.GetComponent<MeshRenderer>().sharedMaterial = palette.Materials[id];
+        MaterialID = id;
     }
 
-    public void OnDestroy()
+    public void Delete()
     {
-
+        for(int i = 0; i < 8; i++)
+        {
+            if (subBlocks[i] != null)
+                subBlocks[i].Delete();
+        }
+        GameObject.Destroy(gameObject);
     }
+}
+
+public class SimpleBlock : IBlock
+{
+    Vector3 position;
+    public Vector3 Position { get { return position; } }
+    public int Level { get; set; }
+
+    public SimpleBlock(Vector3 position, int level)
+    {
+        this.position = position;
+        this.Level = level;
+    }
+    public int MaterialID { get; set; }
 }
