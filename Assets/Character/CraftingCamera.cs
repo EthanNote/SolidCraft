@@ -22,6 +22,12 @@ class CreatingAction : CraftingAction
     public CreatingAction(CraftingCamera camera, BlockManager blockManager, int priority)
         : base(camera, blockManager, priority) { }
 
+    Vector3 lastposition;
+    Vector3 lastNormal;
+    int lastLevel;
+    Block lastCreatedBlock;
+    bool created = false;
+
     public override bool Do(Vector3 position, Vector3 normal, int level, Block hitBlock)
     {
         if (Input.GetKeyDown(KeyCode.Mouse0) && hitBlock != null)
@@ -32,9 +38,40 @@ class CreatingAction : CraftingAction
             {
                 var palette = CraftingCamera.GetComponent<Palette>();
                 block.SetPaletteMaterial(palette, palette.SelectedID);
+                lastposition = position;
+                lastNormal = normal;
+                lastLevel = level;
+                lastCreatedBlock = block;
+                created = true;
+                return true;
             }
+            created = false;
+            lastCreatedBlock = null;
             return true;
         }
+        else if (Input.GetKeyDown(KeyCode.R))
+        {
+            if (created)
+            {
+                Block block;
+                BlockManager.InsertBlock(lastposition+lastNormal*Mathf.Pow(2, lastLevel), lastLevel, out block);
+                if (block != null)
+                {
+                    var palette = CraftingCamera.GetComponent<Palette>();
+                    block.SetPaletteMaterial(palette, palette.SelectedID);
+                    lastposition = block.Position;
+                    //lastNormal = normal;
+                    //lastLevel = level;
+                    lastCreatedBlock = block;
+                    created = true;
+                    return true;
+                }
+                created = false;
+                lastCreatedBlock = null;
+                return true;
+            }
+        }
+        //created = false;
         return false;
     }
 }
@@ -48,17 +85,14 @@ class DropAction : CraftingAction
     {
         if (Input.GetKeyDown(KeyCode.Mouse1) && hitBlock != null)
         {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                if (hitBlock.Level < CraftingCamera.CraftingLevel)
-                    BlockManager.DropBlock(hitBlock.Position, CraftingCamera.CraftingLevel);
-                else
-                    BlockManager.DropBlock(position - normal * Mathf.Pow(2, level), CraftingCamera.CraftingLevel);
-            }
+            BlockManager.DropResult r;
+            if (hitBlock.Level < CraftingCamera.CraftingLevel)
+                r = BlockManager.DropBlock(hitBlock.Position, CraftingCamera.CraftingLevel);
             else
-            {
+                r = BlockManager.DropBlock(position - normal * Mathf.Pow(2, level), CraftingCamera.CraftingLevel);
+            if (r != BlockManager.DropResult.OK)
                 BlockManager.DrillBlock(hitBlock, position - normal * Mathf.Pow(2, level), CraftingCamera.CraftingLevel);
-            }
+
             return true;
         }
         return false;

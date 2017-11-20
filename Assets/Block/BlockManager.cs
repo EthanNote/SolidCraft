@@ -30,20 +30,7 @@ public class BlockManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //root = CreateBlock(16, false);
-        //root.transform.position = new Vector3(-0.5f, -0.5f, -0.5f);
-
-
-        //for (int i = -20; i <= 20; i++)
-        //{
-        //    for (int j = -20; j <= 20; j++)
-        //    {
-        //        Block block;
-        //        InsertBlock(new Vector3(i, -1, j), 0, out block);
-
-        //    }
-        //}
-
+        
     }
 
     public void Initialize(int topLevel = 16)
@@ -89,8 +76,9 @@ public class BlockManager : MonoBehaviour
             int id = parent.FindSubArea(point);
             if (parent.subBlocks[id] != null)
             {
-                block = null;
-                return InsertionResult.FAILED_BLOCKEXIST;
+                DropBlock(parent, parent.subBlocks[id]);
+                //block = null;
+                //return InsertionResult.FAILED_BLOCKEXIST;
             }
 
             parent.subBlocks[id] = CreateBlock(parent.Level - 1, true);
