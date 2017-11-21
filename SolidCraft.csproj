@@ -86,6 +86,7 @@
     <Compile Include="Assets\Block\Palette.cs" />
     <Compile Include="Assets\Block\WorldBuilder.cs" />
     <Compile Include="Assets\Character\Character.cs" />
+    <Compile Include="Assets\Character\CraftingAction.cs" />
     <Compile Include="Assets\Character\CraftingCamera.cs" />
     <Compile Include="Assets\Character\MouseLook.cs" />
   </ItemGroup>

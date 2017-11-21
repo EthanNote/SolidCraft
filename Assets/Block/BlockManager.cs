@@ -77,8 +77,6 @@ public class BlockManager : MonoBehaviour
             if (parent.subBlocks[id] != null)
             {
                 DropBlock(parent, parent.subBlocks[id]);
-                //block = null;
-                //return InsertionResult.FAILED_BLOCKEXIST;
             }
 
             parent.subBlocks[id] = CreateBlock(parent.Level - 1, true);
@@ -113,8 +111,6 @@ public class BlockManager : MonoBehaviour
             int id = parent.FindSubArea(point);
             if (parent.subBlocks[id] != null)
             {
-                //parent.subBlocks[id].OnDestroy();
-                //GameObject.Destroy(parent.subBlocks[id]);
                 parent.subBlocks[id].Delete();
                 parent.subBlocks[id] = null;
                 return DropResult.OK;
@@ -149,7 +145,6 @@ public class BlockManager : MonoBehaviour
             {
                 if (parent.subBlocks[i] == block)
                 {
-                    //GameObject.Destroy(block.gameObject);
                     block.Delete();
                     parent.subBlocks[i] = null;
                     return DropResult.OK;
@@ -181,23 +176,29 @@ public class BlockManager : MonoBehaviour
         block.Entity.SetActive(false);
     }
 
-    public void DrillBlock(Block block, Vector3 position, int level)
+    public bool DrillBlock(Block block, Vector3 position, int level)
     {
-        if (block.IsEntity && BlockUtility.IsInBlock(block, position))
+        if (block!=null && BlockUtility.IsInBlock(block, position))
         {
             if (block.Level <= level)
-                DropBlock(block);
+                return DropBlock(block) == DropResult.OK;
             else
             {
                 SplitBlock(block);
                 for (int i = 0; i < 8; i++)
                 {
-                    DrillBlock(block.subBlocks[i], position, level);
+                    if (DrillBlock(block.subBlocks[i], position, level))
+                        return true;
                 }
             }
         }
+        return false;
     }
 
+    public bool DrillBlock(Vector3 position, int level)
+    {
+        return DrillBlock(root, position, level);
+    }
 
     public Vector3 GetBlockCenter(Vector3 query, int level)
     {
@@ -313,7 +314,6 @@ public class BlockManager : MonoBehaviour
             {
                 ReadFromXml(e, this, this.root);
             }
-            //ReadFromXml(tree.FirstChild.FirstChild, this, root);
             return true;
         }
         catch

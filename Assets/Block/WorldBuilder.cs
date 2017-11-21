@@ -22,7 +22,6 @@ public class WorldBuilder : MonoBehaviour
                     blockManager.InsertBlock(new Vector3(i* GroundBlockSize, -GroundBlockSize, j * GroundBlockSize), InitGroundLevel, out block);
                     if ((i + j) % 2 == 0)
                     {
-                        //block.Entity.GetComponent<MeshRenderer>().sharedMaterial = palette.Materials[2];
                         block.SetPaletteMaterial(palette, 2);
                     }
                 }

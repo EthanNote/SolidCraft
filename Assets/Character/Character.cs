@@ -10,7 +10,6 @@ public class Character : MonoBehaviour
     {
         mouseLook.Init(transform, camera);
     }
-    //public AnimationCurve FreeFallAcceleration;
 
     //float fallDuration = 0;
     public float camHight = 1.5f;
