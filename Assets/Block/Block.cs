@@ -114,15 +114,6 @@ public class Block : MonoBehaviour, IBlock
 
     }
 
-    //void OnDestroy()
-    //{
-    //    for (int i = 0; i < 8; i++)
-    //    {
-    //        if (subBlocks[i] != null)
-    //            GameObject.Destroy(subBlocks[i]);
-    //    }
-    //}
-
     public virtual Vector3 Position { get { return transform.position; } }
 
     public GameObject Entity { get; private set; }
