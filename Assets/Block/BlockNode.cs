@@ -50,6 +50,11 @@ public class BlockNode : HyperDB.DBNode
         block.transform.position = GetPosition(Keys, Level);
         if (block != null)
             block.node = this;
+
+        Palette palette = userData as Palette;
+        Material mat= palette.Materials[palette.SelectedID];
+        obj.GetComponent<MeshRenderer>().sharedMaterial = mat;
+
     }
 
     /// <summary>

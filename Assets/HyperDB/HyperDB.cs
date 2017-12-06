@@ -189,7 +189,7 @@ namespace HyperDB
 
         }
 
-        QueryResult Insert(DBNode root, int[] keys, int insertLevel, object userData = null)
+        QueryResult Insert(DBNode root, int[] keys, int insertLevel, object userData)
         {
             if (root.Level < insertLevel)
             {
@@ -220,7 +220,7 @@ namespace HyperDB
                     node.SetParent(root, index);
                 }
             }
-            return Insert(root.ChildNodes[index], keys, insertLevel);
+            return Insert(root.ChildNodes[index], keys, insertLevel, userData);
         }
         //class DBTreeErrorException : Exception { }
         //class DBInsertNodeExistException : Exception { }

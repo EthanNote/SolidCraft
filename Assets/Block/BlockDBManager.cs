@@ -7,6 +7,7 @@ public class BlockDBManager : MonoBehaviour
 
     public HyperDB.DBManager DBManager;
     public GameObject BlockTemplate;
+    public Palette palette;
     // Use this for initialization
     void Start()
     {
@@ -19,7 +20,7 @@ public class BlockDBManager : MonoBehaviour
         {
             for (int j = 0; j < 20; j++)
             {
-                DBManager.Insert(new int[] { i << 6, 0, j << 6 }, 6);
+                DBManager.Insert(new int[] { i << 6, 0, j << 6 }, 6, palette);
             }
         }
         print(DBManager.Dump(DBManager.Root));
