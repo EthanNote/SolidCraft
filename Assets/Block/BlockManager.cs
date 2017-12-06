@@ -30,7 +30,7 @@ public class BlockManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        
+
     }
 
     public void Initialize(int topLevel = 16)
@@ -156,9 +156,21 @@ public class BlockManager : MonoBehaviour
         return DropBlock(parent.subBlocks[area], block);
     }
 
-    Block GetParent(Block block, int parentLevel)
+    public Block GetParent(Block block, int parentLevel)
     {
-        return null;
+        if (block == null)
+            return null;
+        if (parentLevel <= block.Level)
+            return block;
+
+        Block currentSearch = root;
+        while (currentSearch != null && currentSearch.Level > parentLevel)
+        {
+            currentSearch = currentSearch.subBlocks[currentSearch.FindSubArea(block.Position)];
+
+        }
+        print("CHILD: " + block.Position + " LV: " + block.Level+" PARENT: " + currentSearch.Position + " LV " + currentSearch.Level);
+        return currentSearch;
     }
 
     void SplitBlock(Block block)
@@ -178,7 +190,7 @@ public class BlockManager : MonoBehaviour
 
     public bool DrillBlock(Block block, Vector3 position, int level)
     {
-        if (block!=null && BlockUtility.IsInBlock(block, position))
+        if (block != null && BlockUtility.IsInBlock(block, position))
         {
             if (block.Level <= level)
                 return DropBlock(block) == DropResult.OK;
@@ -291,7 +303,7 @@ public class BlockManager : MonoBehaviour
 
         parent.subBlocks[id] = block;
 
-        foreach(XmlElement e in xmlElement.ChildNodes)
+        foreach (XmlElement e in xmlElement.ChildNodes)
         {
             ReadFromXml(e, blockManager, block);
         }
@@ -310,7 +322,7 @@ public class BlockManager : MonoBehaviour
                     tree = e;
             }
             XmlElement root = (XmlElement)tree.FirstChild;
-            foreach(XmlElement e in root.ChildNodes)
+            foreach (XmlElement e in root.ChildNodes)
             {
                 ReadFromXml(e, this, this.root);
             }
@@ -318,7 +330,7 @@ public class BlockManager : MonoBehaviour
         }
         catch
         {
-            foreach(var b in root.subBlocks)
+            foreach (var b in root.subBlocks)
             {
                 DropBlock(b);
             }

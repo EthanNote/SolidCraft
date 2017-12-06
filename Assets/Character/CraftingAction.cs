@@ -100,6 +100,9 @@ class DropAction : CraftingAction
 
     bool DropOrDrill(Vector3 markerPosition, Vector3 normal, int level, Block hitBlock)
     {
+        if (Input.GetKey(KeyCode.Mouse0))
+            repeatable = false;
+
         if (Input.GetKeyDown(KeyCode.Mouse1) && hitBlock != null)
         {
             BlockManager.DropResult r;
@@ -178,10 +181,11 @@ class PaintingAction : CraftingAction
 
     public override bool Do(Vector3 markerPosition, Vector3 normal, int level, Block hitBlock)
     {
-        if (Input.GetMouseButtonDown(2) && hitBlock != null)
+        if (Input.GetMouseButton(2) && hitBlock != null)
         {
             var palette = CraftingCamera.GetComponent<Palette>();
-            hitBlock.SetPaletteMaterial(palette, palette.SelectedID);
+            Block parent = BlockManager.GetParent(hitBlock, level);
+            parent.SetPaletteMaterial(palette, palette.SelectedID);
             return true;
         }
         return false;

@@ -87,6 +87,7 @@ public class BlockUtility
         return BlockUtility.indexMap[new B3(pos.x > block.Position.x,
             pos.y > block.Position.y, pos.z > block.Position.z)];
     }
+
 }
 
 public class Block : MonoBehaviour, IBlock
@@ -152,11 +153,17 @@ public class Block : MonoBehaviour, IBlock
     {
         Entity.GetComponent<MeshRenderer>().sharedMaterial = palette.Materials[id];
         MaterialID = id;
+        //print("SET");
+        for (int i = 0; i < 8; i++)
+        {
+            if (subBlocks[i] != null)
+                subBlocks[i].SetPaletteMaterial(palette, id);
+        }
     }
 
     public void Delete()
     {
-        for(int i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++)
         {
             if (subBlocks[i] != null)
                 subBlocks[i].Delete();
