@@ -56,6 +56,12 @@ class CreatingBlockAction : CamCraftingAction
 
             var keys = BlockNode.GetKeys(parameter.markerPosition, camera.CraftingLevel);
             var result = manager.DBManager.Insert(keys, camera.CraftingLevel, camera.GetComponent<Palette>());
+            if(result.Succeed==false && Input.GetKey(KeyCode.LeftShift))
+            {
+                MonoBehaviour.print("Force craft");
+                manager.DBManager.Delete(result.Result);
+                result = manager.DBManager.Insert(keys, camera.CraftingLevel, camera.GetComponent<Palette>());
+            }
             if (result.Succeed)
             {
                 var rc = new CraftingActionParameter();
