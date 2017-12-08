@@ -43,6 +43,7 @@ class CreatingBlockAction : CamCraftingAction
     : base(camera, manager, priority)
     { }
 
+
     public override CraftingActionParameter Do(CraftingActionParameter parameter)
     {
         if(Input.GetKeyDown(KeyCode.R) && repeatParameter != null)
@@ -51,7 +52,8 @@ class CreatingBlockAction : CamCraftingAction
         }
         if (Input.GetKeyDown(KeyCode.Mouse0) && parameter.pickedBlock != null)
         {
-            var palette = camera.GetComponent<Palette>();
+            //var palette = camera.GetComponent<Palette>();
+
             var keys = BlockNode.GetKeys(parameter.markerPosition, camera.CraftingLevel);
             var result = manager.DBManager.Insert(keys, camera.CraftingLevel, camera.GetComponent<Palette>());
             if (result.Succeed)

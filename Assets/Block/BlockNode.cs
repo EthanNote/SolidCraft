@@ -18,12 +18,17 @@ public class BlockNode : HyperDB.DBNode
 
     public static Vector3 GetPosition(int[] keys, int level)
     {
-        return new Vector3(keys[0] / 64.0f, keys[1] / 64.0f, keys[2] / 64.0f);
+        float offset = (1 << level) / 128.0f;
+        return new Vector3(keys[0] / 64.0f + offset, keys[1] / 64.0f + offset, keys[2] / 64.0f + offset);
     }
 
     public static int[] GetKeys(Vector3 position, int level)
     {
-        return new int[] { (int)(position.x * 64.0), (int)(position.y * 64.0), (int)(position.z * 64.0) };
+		return new int[] { 
+			(((int)(position.x * 64.0))>>level)<<level, 
+			(((int)(position.y * 64.0))>>level)<<level, 
+			(((int)(position.z * 64.0))>>level)<<level
+		};
     }
     /// <summary>
     /// 
@@ -52,9 +57,9 @@ public class BlockNode : HyperDB.DBNode
             block.node = this;
 
         Palette palette = userData as Palette;
-        Material mat= palette.Materials[palette.SelectedID];
+        Material mat = palette.Materials[palette.SelectedID];
         obj.GetComponent<MeshRenderer>().sharedMaterial = mat;
-
+        obj.transform.localScale = Vector3.one * ((1 << Level) / 64.0f);
     }
 
     /// <summary>
