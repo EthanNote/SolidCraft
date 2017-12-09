@@ -21,6 +21,7 @@ public class BlockCraftingCamera : MonoBehaviour
         this.actions = new List<CamCraftingAction>()
         {
             new CreatingBlockAction(this, manager, 0),
+            new DeletionAction(this, manager, 0),
             new ZoomLevelAction(this, manager, 0)
         };
     }

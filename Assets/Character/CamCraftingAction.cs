@@ -46,19 +46,20 @@ class CreatingBlockAction : CamCraftingAction
 
     public override CraftingActionParameter Do(CraftingActionParameter parameter)
     {
-        if(Input.GetKeyDown(KeyCode.R) && repeatParameter != null)
+        if (Input.GetKeyDown(KeyCode.R) && repeatParameter != null)
         {
             parameter = repeatParameter;
         }
         if (Input.GetKeyDown(KeyCode.Mouse0) && parameter.pickedBlock != null)
         {
 
-            var keys = BlockNode.GetKeys(parameter.markerPosition, camera.CraftingLevel);
-            var result = manager.DBManager.Insert(keys, camera.CraftingLevel, camera.GetComponent<Palette>());
-            if(result.Succeed==false && Input.GetKey(KeyCode.LeftShift))
+            var keys = BlockNode.GetKeys(parameter.markerPosition, parameter.level);
+            MonoBehaviour.print("ADD" + new Vector3(keys[0], keys[1], keys[2]));
+            var result = manager.DBManager.Insert(keys, parameter.level, camera.GetComponent<Palette>());
+            if (result.Succeed == false && Input.GetKey(KeyCode.LeftShift))
             {
                 manager.DBManager.Delete(result.Result);
-                result = manager.DBManager.Insert(keys, camera.CraftingLevel, camera.GetComponent<Palette>());
+                result = manager.DBManager.Insert(keys, parameter.level, camera.GetComponent<Palette>());
             }
             if (result.Succeed)
             {
@@ -78,7 +79,7 @@ class CreatingBlockAction : CamCraftingAction
 
 class ZoomLevelAction : CamCraftingAction
 {
-    public ZoomLevelAction(BlockCraftingCamera camera, BlockDBManager manager, int priority) 
+    public ZoomLevelAction(BlockCraftingCamera camera, BlockDBManager manager, int priority)
         : base(camera, manager, priority)
     {
     }
@@ -91,9 +92,54 @@ class ZoomLevelAction : CamCraftingAction
             if (wheel > 0)
                 camera.CraftingLevel++;
             else if (wheel < 0)
-                camera.CraftingLevel--;            
+                camera.CraftingLevel--;
         }
         return null;
+    }
+}
+
+class DeletionAction : CamCraftingAction
+{
+    public DeletionAction(BlockCraftingCamera camera, BlockDBManager manager, int priority) : base(camera, manager, priority)
+    {
+    }
+
+    public override CraftingActionParameter Do(CraftingActionParameter parameter)
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse1) && parameter.pickedBlock != null)
+        {
+            var keys = BlockNode.GetKeys(parameter.markerPosition, parameter.level);
+            //MonoBehaviour.print(parameter.markerPosition+"DELETE"+new Vector3(keys[0], keys[1], keys[2]));
+            var result = manager.DBManager.Search(keys, parameter.level);
+            if (result.Succeed)
+            {
+                manager.DBManager.Delete(result.Result);
+                SetUinqueRepeat(parameter);
+                return parameter;
+            }
+            //MonoBehaviour.print(parameter.markerPosition);
+            parameter.markerPosition -= parameter.normal * (1<<parameter.level)/64.0f;
+            //MonoBehaviour.print(parameter.markerPosition);
+
+            keys = BlockNode.GetKeys(parameter.markerPosition, parameter.level);
+            //MonoBehaviour.print(parameter.markerPosition + "DELETE2" + new Vector3(keys[0], keys[1], keys[2]));
+            result = manager.DBManager.Search(keys, parameter.level);
+            if (result.Succeed)
+            {
+                manager.DBManager.Delete(result.Result);
+                SetUinqueRepeat(parameter);
+                return parameter;
+            }
+            else if (result.Result != null)
+            {
+                manager.DBManager.SubExclude(result.Result, keys, parameter.level, camera.GetComponent<Palette>());
+                MonoBehaviour.print(manager.DBManager.Dump(manager.DBManager.Root));
+                return parameter;
+            }
+            //if(manager.DBManager.Delete())
+        }
+        return null;
+
     }
 }
 

@@ -107,7 +107,6 @@ namespace HyperDB
             for (int i = 0; i < Dimension; i++)
             {
                 result[i] = (((childIndex >> i) & 1) << (parentLevel - 1)) | parentKeys[i];
-                //Console.WriteLine(String.Format("{0} - {1} {2} -> {3}", i, ((childIndex >> i) & 1) << (parentLevel - 1), parentKeys[i], result[i]));
             }
             return result;
         }
@@ -306,7 +305,6 @@ namespace HyperDB
                 for (int i = 0; i < DivisionCount; i++)
                 {
                     var node = CreateNode();
-                    //node.OnInsert(keys, root.Level - 1, userData);
                     node.SetParent(root, i);
                     FullSubDivide(node, divLevel, userData);
                 }
@@ -321,7 +319,14 @@ namespace HyperDB
         public void SubExclude(DBNode root, int[] keys, int divLevel, object userData=null)
         {
             if (SubDividable(root, keys, divLevel))
-                SubExclude_R(root, keys, divLevel, userData);
+            {
+                var parent = root.Parent;
+                var index = root.Index;
+                DeleteTree(root);
+                var node = CreateNode();
+                node.SetParent(parent, index);
+                SubExclude_R(node, keys, divLevel, userData);
+            }
         }
         void SubExclude_R(DBNode root, int[] keys, int divLevel, object userData)
         {
