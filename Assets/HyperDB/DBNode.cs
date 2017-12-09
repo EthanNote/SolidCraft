@@ -46,7 +46,7 @@ namespace HyperDB
 
         public void UnsetParent()
         {
-            if (Parent != null && Index > 0 && Index < Manager.DivisionCount && Parent.ChildNodes[Index] == this)
+            if (Parent != null && Index >= 0 && Index < Manager.DivisionCount && Parent.ChildNodes[Index] == this)
             {
                 Parent.ChildNodes[Index] = null;
             }

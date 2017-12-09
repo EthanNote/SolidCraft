@@ -14,8 +14,6 @@ public class BlockDBManager : MonoBehaviour
         DBManager = new HyperDB.DBManager(31, 3, typeof(BlockNode));
         BlockNode.BlockTemplate = BlockTemplate;
 
-
-        //DBManager.Insert(new int[] { 3, 0, 4}, 0);
         for (int i = 0; i < 20; i++)
         {
             for (int j = 0; j < 20; j++)
@@ -23,7 +21,6 @@ public class BlockDBManager : MonoBehaviour
                 DBManager.Insert(new int[] { i << 6, 0, j << 6 }, 6, palette);
             }
         }
-        print(DBManager.Dump(DBManager.Root));
     }
 
 
