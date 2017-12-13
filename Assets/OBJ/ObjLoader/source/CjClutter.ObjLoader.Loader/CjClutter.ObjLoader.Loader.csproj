@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>CjClutter.ObjLoader.Loader</PackageId>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
+    <Copyright>Copyright ©  2017</Copyright>
+    <Product>ObjLoader.Loader</Product>
+  </PropertyGroup>
+</Project>
