@@ -40,29 +40,7 @@ public class BlockCraftingCamera : MonoBehaviour
                 //var nodekey = pickedBlock.node.Keys;
 
                 int[] keys = BlockNode.GetKeys(hitinfo.point+hitinfo.normal*(1<<CraftingLevel)/6400.0f, CraftingLevel);
-                //int[] keys = new int[3];
-                //nodekey.CopyTo(keys, 0);
-
-				//print(new Vector3(keys[0], keys[1], keys[2]));
-
-                //if (Vector3.Dot(hitinfo.normal, Vector3.right) > 0.9f)
-                //    keys[0] += (1 << CraftingLevel);
-
-                //if (Vector3.Dot(hitinfo.normal, Vector3.up) > 0.9f)
-                //    keys[1] += (1 << CraftingLevel);
-
-                //if (Vector3.Dot(hitinfo.normal, Vector3.forward) > 0.9f)
-                //    keys[2] += (1 << CraftingLevel);
-
-                //if (Vector3.Dot(hitinfo.normal, Vector3.right) < -0.9f)
-                //    keys[0] -= (1 << CraftingLevel);
-
-                //if (Vector3.Dot(hitinfo.normal, Vector3.up) < -0.9f)
-                //    keys[1] -= (1 << CraftingLevel);
-
-                //if (Vector3.Dot(hitinfo.normal, Vector3.forward) < -0.9f)
-                //    keys[2] -= (1 << CraftingLevel);
-
+               
                 marker.transform.position = BlockNode.GetPosition(keys, CraftingLevel);
                 marker.transform.localScale = Vector3.one * (1 << CraftingLevel)/64.0f;
                 marker.SetActive(true);

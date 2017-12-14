@@ -20,10 +20,12 @@ namespace ObjLoader.Loader.Loaders
         {
             var currentLine = _lineStreamReader.ReadLine();
 
-            if (string.IsNullOrWhiteSpace(currentLine) || currentLine[0] == '#')
-            {
+            if (currentLine == null || currentLine.Length == 0 || currentLine.Trim().Length == 0 || currentLine[0] == '#')
                 return;
-            }
+            //if (string.IsNullOrWhiteSpace(currentLine) || currentLine[0] == '#')
+            //{
+            //    return;
+            //}
 
             var fields = currentLine.Trim().Split(null, 2);
             var keyword = fields[0].Trim();

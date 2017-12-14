@@ -1806,6 +1806,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 054888eb1cc2a8c4ab4f8c952cd50447, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  filename: model.obj
+  manager: {fileID: 768747807}
+  palette: {fileID: 753658132}
 --- !u!4 &2109166771
 Transform:
   m_ObjectHideFlags: 0
